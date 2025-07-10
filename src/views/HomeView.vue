@@ -10,6 +10,7 @@ const submissionStore = useSubmissionStore()
 
 const selectedOrganization = ref(null)
 const selectedAnswers = ref({})
+const isSuccess = ref(false)
 
 onMounted(() => {
     organizationStore.fetchOrganizations({ pagination: false })
@@ -44,12 +45,20 @@ const send = () => {
         .then(() => {
             selectedOrganization.value = ''
             selectedAnswers.value = {}
+            isSuccess.value = true
         })
 }
 </script>
 
 <template>
     <div class="bg-[#F0F4F8] min-h-dvh">
+        <div v-show="isSuccess" class="fixed inset-0 bg-black/30 z-50 grid place-content-center">
+            <div class="bg-white p-10 rounded">
+                <p class="text-2xl mb-5">Javoblaringiz muvaffaqiyatli jo'natildi!</p>
+
+                <button @click="isSuccess = false" class="bg-primary mt-5 px-3 py-2 cursor-pointer hover:opacity-75 transition-all text-white text-2xl rounded w-full">Yo'pish</button>
+            </div>
+        </div>
         <main class="container mx-auto flex min-h-dvh justify-center items-center">
             <div class="relative rounded-lg md:bg-white p-4 sm:p-10 w-full md:w-fit md:min-w-200 border-transparent sm:border md:border-gray-300">
                 <div class="bg-[url(/111-01.png)] bg-cover absolute inset-0 opacity-15"></div>
