@@ -116,7 +116,7 @@ function deleteItem() {
                     <th class="text-start">Tashkilot</th>
                     <th class="text-start">Savollar</th>
                     <th class="text-start">Javoblar</th>
-                    <th class="text-start">Jo'natilgan vaqti</th>
+                    <th class="text-start whitespace-nowrap px-5">Jo'natilgan vaqti</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -129,7 +129,7 @@ function deleteItem() {
                     <td>
                         <p v-for="answer of submission.answers.map(answerItem => `${answerItem.answerOption.label}`)" :key="answer.id">{{ answer }}</p>
                     </td>
-                    <td>
+                    <td class="px-5">
                         <p>{{ formatedDate(submission.createdAt) }}</p>
                     </td>
                 </tr>
