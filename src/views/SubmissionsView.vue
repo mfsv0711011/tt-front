@@ -1,5 +1,4 @@
 <script setup>
-import {useOrganizationStore} from "@/stores/organization.js";
 import {ref, watch} from "vue";
 import PaginatorComponent from "@/components/PaginatorComponent.vue";
 import {useRoute, useRouter} from "vue-router";
@@ -21,6 +20,17 @@ const newSubmission = ref({
     ru: ''
 })
 
+const formatedDate = isoDate => {
+    const date = new Date(isoDate);
+
+// Tashkent vaqti olish
+    const options = { timeZone: "Asia/Tashkent" };
+    const tzDate = new Date(date.toLocaleString("en-US", options));
+
+    const pad = (num) => String(num).padStart(2, "0");
+
+    return `${pad(tzDate.getDate())}.${pad(tzDate.getMonth() + 1)}.${tzDate.getFullYear()} ${pad(tzDate.getHours())}:${pad(tzDate.getMinutes())}`;
+}
 
 watch(
     [() => filters.value],
@@ -106,6 +116,7 @@ function deleteItem() {
                     <th class="text-start">Tashkilot</th>
                     <th class="text-start">Savollar</th>
                     <th class="text-start">Javoblar</th>
+                    <th class="text-start">Jo'natilgan vaqti</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -117,6 +128,9 @@ function deleteItem() {
                     </td>
                     <td>
                         <p v-for="answer of submission.answers.map(answerItem => `${answerItem.answerOption.label}`)" :key="answer.id">{{ answer }}</p>
+                    </td>
+                    <td>
+                        <p>{{ formatedDate(submission.createdAt) }}</p>
                     </td>
                 </tr>
                 </tbody>
