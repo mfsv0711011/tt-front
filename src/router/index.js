@@ -13,7 +13,7 @@ const ifNotAuthorized = (to, from, next) => {
     if (localStorage.getItem('tt_accessToken') === null) {
         next()
     } else {
-        next({ name: 'home' })
+        next({ name: 'admin' })
     }
 }
 

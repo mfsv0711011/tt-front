@@ -6,9 +6,9 @@ const userStore = useUserStore()
 
 <template>
     <div class="flex min-h-dvh">
-        <div class="w-70 bg-primary sticky top-0 border-gray-400 border-e">
+        <div class="w-70 flex-none bg-primary sticky top-0 border-gray-400 border-e">
             <div class="h-16 border-b border-gray-400 flex justify-center items-center">
-                <div class="text-4xl text-center font-semibold text-white">Logo</div>
+                <div class="text-4xl text-center font-semibold text-white">Nokorrupsiya</div>
             </div>
             <nav class="flex flex-col text-white border-b border-gray-400 text-lg p-5 gap-2">
 <!--                <router-link active-class="bg-primary-active" :to="{ name: 'admin'}" class="transition-all hover:bg-white/20 h-14 flex items-center px-4 rounded-lg gap-2">-->

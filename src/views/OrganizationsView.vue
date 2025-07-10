@@ -155,8 +155,8 @@ function deleteItem() {
                 <tr v-for="(organization, index) of organizationStore.getOrganizations.models" :key="organization.id" class="not-last:border-b border-gray-400">
                     <td class="pl-5">{{ index + 1 }}</td>
                     <td>{{ organization.name }}</td>
-                    <td>{{ organization.negativeCount }}</td>
                     <td>{{ organization.positiveCount }}</td>
+                    <td>{{ organization.negativeCount }}</td>
                     <td>
                         <div class="flex justify-end m-2 gap-2">
                             <button @click="editAction(organization.id)" class="p-2 rounded bg-orange-500 text-white cursor-pointer hover:opacity-75 transition-all">
