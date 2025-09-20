@@ -58,6 +58,15 @@ const router = createRouter({
             beforeEnter: ifAuthorized
         },
         {
+            path: '/admin/users',
+            name: 'users',
+            meta: {
+                layout: defineAsyncComponent(() => import('@/layout/MainLayout.vue'))
+            },
+            component: () => import('@/views/UsersView.vue'),
+            beforeEnter: ifAuthorized
+        },
+        {
             path: '/login',
             name: 'login',
             meta: {

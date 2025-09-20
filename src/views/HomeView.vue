@@ -21,7 +21,7 @@ onMounted(async () => {
     await organizationStore.fetchOrganizations({ page: 1 })
     organizations.value = organizationStore.getOrganizations.models
 
-    Promise.allSettled([
+    await Promise.allSettled([
         surveyStore.fetchSurvey(),
         surveyStore.fetchAnswerOptions()
     ])
