@@ -97,8 +97,9 @@ function onIntersectionObserver([entry]) {
                             <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9l-7 7l-7-7" />
                         </svg>
 
-                        <span ref="root" class="absolute top-full mt-1 left-0 overflow-auto flex flex-col bg-white shadow inset-0" :class="{'h-50': isOpen, 'h-0': !isOpen}">
+                        <span ref="root" class="absolute top-full mt-1 left-0 overflow-auto flex flex-col bg-white shadow inset-0" :class="{'h-50': isOpen && organizations.length > 3, 'h-0': !isOpen, 'h-fit py-4': isOpen && organizations.length < 3}">
                             <button
+                                v-if="organizations.length"
                                 @click="setOrganization(organization)"
                                 class="py-4 text-start px-3 hover:bg-primary hover:text-white"
                                 v-for="organization of organizations"
@@ -106,6 +107,7 @@ function onIntersectionObserver([entry]) {
                             >
                                 {{ organization.name }}
                             </button>
+                            <span class="px-4 text-center text-gray-500 py-2" v-else>Hech narsa topilmadi</span>
                             <span v-if="organizationStore.getOrganizations.totalItems > organizations.length" v-intersection-observer="onIntersectionObserver">
                                 <svg class="animate-spin text-primary mx-auto" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16">
                                     <path fill="currentColor" d="M2.501 8a5.5 5.5 0 1 1 5.5 5.5A.75.75 0 0 0 8 15a7 7 0 1 0-7-7a.75.75 0 0 0 1.501 0" stroke-width="1" stroke="currentColor" />
