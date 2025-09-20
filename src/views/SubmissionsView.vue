@@ -121,7 +121,7 @@ function deleteItem() {
                 </thead>
                 <tbody>
                 <tr v-for="(submission, index) of submissionStore.getSubmissions.models" :key="submission.id" class="not-last:border-b border-gray-400">
-                    <td class="pl-5">{{ index + 1 }}</td>
+                    <td class="pl-5">{{ submission.id }}</td>
                     <td>{{ submission.organization.name.uz }}, {{ submission.organization.name.ru }}</td>
                     <td>
                         <p v-for="question of submission.answers.map(answer => `${answer.question.id}. ${answer.question.text}`)" :key="question.id">{{ question }}</p>

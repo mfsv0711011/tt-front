@@ -153,7 +153,7 @@ function deleteItem() {
                 </thead>
                 <tbody>
                 <tr v-for="(organization, index) of organizationStore.getOrganizations.models" :key="organization.id" class="not-last:border-b border-gray-400">
-                    <td class="pl-5">{{ index + 1 }}</td>
+                    <td class="pl-5">{{ organization.id }}</td>
                     <td>{{ organization.name }}</td>
                     <td>{{ organization.positiveCount }}</td>
                     <td>{{ organization.negativeCount }}</td>

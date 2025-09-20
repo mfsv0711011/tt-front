@@ -1,8 +1,9 @@
 <script setup>
 import {useOrganizationStore} from "@/stores/organization.js";
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import {useSurveyStore} from "@/stores/survey.js";
 import {useSubmissionStore} from "@/stores/submission.js";
+import {vIntersectionObserver} from "@vueuse/components";
 
 const organizationStore = useOrganizationStore()
 const surveyStore = useSurveyStore()
@@ -11,15 +12,23 @@ const submissionStore = useSubmissionStore()
 const selectedOrganization = ref(null)
 const selectedAnswers = ref({})
 const isSuccess = ref(false)
+const isOpen = ref(false)
+const root = ref(null)
+const organizationPage = ref(1)
+const organizations = ref([])
 
-onMounted(() => {
-    organizationStore.fetchOrganizations({ pagination: false })
-    surveyStore.fetchSurvey()
-    surveyStore.fetchAnswerOptions()
+onMounted(async () => {
+    await organizationStore.fetchOrganizations({ page: 1 })
+    organizations.value = organizationStore.getOrganizations.models
+
+    Promise.allSettled([
+        surveyStore.fetchSurvey(),
+        surveyStore.fetchAnswerOptions()
+    ])
 })
 
-const setOrganization = event => {
-    selectedOrganization.value = event.target.value
+const setOrganization = id => {
+    selectedOrganization.value = id
 }
 
 const send = () => {
@@ -31,10 +40,14 @@ const send = () => {
         alert("Iltimos, javoblarni belgilan");
         return;
     }
+    if (!selectedOrganization.value.id) {
+        alert("Iltimos, tashkilotni tanlang");
+        return;
+    }
 
     const payload = {
         survey: "/api/surveys/1",
-        organization: selectedOrganization.value,
+        organization: `/api/organizations/${selectedOrganization.value.id}`,
         answers: Object.entries(selectedAnswers.value).map(([questionId, answerOptionId]) => ({
             question: `/api/questions/${questionId}`,
             answerOption: answerOptionId
@@ -47,6 +60,19 @@ const send = () => {
             selectedAnswers.value = {}
             isSuccess.value = true
         })
+}
+const isVisible = ref(false)
+
+watch(isVisible, async () => {
+    if (isVisible.value) {
+        organizationPage.value++
+        await organizationStore.fetchOrganizations({ page: organizationPage.value })
+        organizations.value = [...organizations.value, ...organizationStore.getOrganizations.models]
+    }
+})
+
+function onIntersectionObserver([entry]) {
+    isVisible.value = entry?.isIntersecting || false
 }
 </script>
 
@@ -65,17 +91,28 @@ const send = () => {
                 <div class="relative z-20">
                     <h2 class="text-5xl text-center font-medium mb-10">So'rovnoma</h2>
                     <p class="text-4xl text-center mb-5">Fuqaro nima deydi?</p>
-                    <select @change="setOrganization" class="p-3 border rounded appearance-auto text-2xl">
-                        <option value="Tashkilotni tanlang" disabled selected class="text-gray-400">Tashkilotni tanlang</option>
-                        <option
-                            v-for="organization of organizationStore.getOrganizations.models"
-                            :key="organization.id"
-                            :value="`/api/organizations/${organization.id}`"
-                            class="text-gray-400 truncate"
-                        >
-                            {{ organization.name }}
-                        </option>
-                    </select>
+                    <button @click.stop="isOpen = !isOpen" class="text-2xl text-start whitespace-nowrap relative px-3 cursor-pointer py-3.5 border rounded flex gap-2 items-center w-full justify-between">
+                        <span>{{ selectedOrganization?.name || 'Tashkilotni tanlang' }}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9l-7 7l-7-7" />
+                        </svg>
+
+                        <span ref="root" class="absolute top-full mt-1 left-0 overflow-auto flex flex-col bg-white shadow inset-0" :class="{'h-50': isOpen, 'h-0': !isOpen}">
+                            <button
+                                @click="setOrganization(organization)"
+                                class="py-4 text-start px-3 hover:bg-primary hover:text-white"
+                                v-for="organization of organizations"
+                                :key="organization.id"
+                            >
+                                {{ organization.name }}
+                            </button>
+                            <span v-if="organizationStore.getOrganizations.totalItems > organizations.length" v-intersection-observer="onIntersectionObserver">
+                                <svg class="animate-spin text-primary mx-auto" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16">
+                                    <path fill="currentColor" d="M2.501 8a5.5 5.5 0 1 1 5.5 5.5A.75.75 0 0 0 8 15a7 7 0 1 0-7-7a.75.75 0 0 0 1.501 0" stroke-width="1" stroke="currentColor" />
+                                </svg>
+                            </span>
+                        </span>
+                    </button>
 
                     <div class="flex flex-col gap-10 py-10">
                         <div v-for="question of surveyStore.getSurvey.questions" :key="question.id">
